@@ -7439,3 +7439,24 @@ html {
 .btn:hover ~ .custom-cursor-follower {
     transform: translate(-50%, -50%) scale(1.2);
 }
+
+/* Add this to make the typing text bright white */
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    min-height: 2.5rem;
+    color: #ffffff !important; /* Add this line */
+    font-weight: 600; /* Optional: make it bolder */
+}
+
+.typing-text {
+    display: inline-block;
+    color: #ffffff !important; /* Add this line */
+}
+
+/* Make sure the text is always visible */
+#typingText {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3); /* Optional glow effect */
+}
