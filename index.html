@@ -555,27 +555,61 @@
                             </div>
                         </div>
                         
+                                               <!-- MODIFIED SECTION: Technical Expertise with Expandable Details -->
                         <div class="skills-cloud">
                             <h4 class="cloud-title">Technical Expertise</h4>
+                            <p class="cloud-subtitle">Click on any skill to view detailed information about my experience and capabilities</p>
                             <div class="cloud-tags">
-                                <span class="tag tag-expert">Python</span>
-                                <span class="tag tag-expert">SQL</span>
-                                <span class="tag tag-advanced">R Programming</span>
-                                <span class="tag tag-expert">Tableau</span>
-                                <span class="tag tag-expert">Power BI</span>
-                                <span class="tag tag-expert">Excel/Google Sheets</span>
-                                <span class="tag tag-advanced">Google Analytics</span>
-                                <span class="tag tag-advanced">Machine Learning</span>
-                                <span class="tag tag-expert">Statistical Analysis</span>
-                                <span class="tag tag-advanced">Data Mining</span>
-                                <span class="tag tag-intermediate">ETL Processes</span>
-                                <span class="tag tag-intermediate">AWS/GCP</span>
-                                <span class="tag tag-advanced">Apache Spark</span>
-                                <span class="tag tag-intermediate">Hadoop</span>
-                                <span class="tag tag-advanced">Data Warehousing</span>
-                                <span class="tag tag-expert">Dashboard Design</span>
-                                <span class="tag tag-advanced">A/B Testing</span>
-                                <span class="tag tag-expert">Data Storytelling</span>
+                                <span class="tag tag-expert" data-skill="python" data-description="Comprehensive experience with Python for data analysis, machine learning, and automation including Pandas, NumPy, Scikit-learn, and data visualization libraries. 6+ years professional experience.">Python</span>
+                                <span class="tag tag-expert" data-skill="sql" data-description="Advanced SQL skills for complex queries, data extraction, transformation, and analysis. Expertise in PostgreSQL, MySQL, SQL Server with query optimization and performance tuning. 6+ years experience.">SQL</span>
+                                <span class="tag tag-advanced" data-skill="r" data-description="Statistical programming with R for data analysis, visualization, and statistical modeling. Experience with ggplot2, dplyr, and RShiny for dashboard development. 4 years professional experience.">R Programming</span>
+                                <span class="tag tag-expert" data-skill="tableau" data-description="Expert in Tableau dashboard design, data visualization, and business intelligence solutions. Certified Tableau Desktop Specialist with 5+ years experience creating interactive, insightful dashboards.">Tableau</span>
+                                <span class="tag tag-expert" data-skill="powerbi" data-description="Power BI development including DAX calculations, data modeling, and report automation. Expertise in creating enterprise-level BI solutions with Power BI Service integration. 4 years experience.">Power BI</span>
+                                <span class="tag tag-expert" data-skill="excel" data-description="Advanced Excel skills including complex formulas, pivot tables, Power Query, VBA macros, and data modeling. Expert in Google Sheets with App Script automation. 6+ years experience.">Excel/Google Sheets</span>
+                                <span class="tag tag-advanced" data-skill="google-analytics" data-description="Google Analytics implementation, tracking setup, and data analysis for web and mobile applications. Certified in Google Analytics with 3+ years experience in digital analytics.">Google Analytics</span>
+                                <span class="tag tag-advanced" data-skill="ml" data-description="Machine learning model development including supervised/unsupervised learning, feature engineering, and model deployment. Experience with Scikit-learn, TensorFlow, and model evaluation techniques.">Machine Learning</span>
+                                <span class="tag tag-expert" data-skill="stats" data-description="Statistical analysis including hypothesis testing, regression analysis, A/B testing, and experimental design. Strong foundation in inferential statistics and probability theory. 6+ years experience.">Statistical Analysis</span>
+                                <span class="tag tag-advanced" data-skill="datamining" data-description="Data mining techniques for pattern discovery, association rule learning, and clustering analysis. Experience with large datasets and unstructured data exploration.">Data Mining</span>
+                                <span class="tag tag-intermediate" data-skill="etl" data-description="ETL/ELT pipeline development using Python, SQL, and cloud services. Experience with data transformation, cleansing, and workflow automation for data warehousing.">ETL Processes</span>
+                                <span class="tag tag-intermediate" data-skill="cloud" data-description="Cloud platform experience with AWS (S3, Redshift, Glue) and Google Cloud Platform (BigQuery, Dataflow). Certified in AWS Data Analytics with 2+ years cloud experience.">AWS/GCP</span>
+                                <span class="tag tag-advanced" data-skill="spark" data-description="Apache Spark for big data processing including Spark SQL, DataFrames, and MLlib. Experience with distributed computing and large-scale data processing. 2 years experience.">Apache Spark</span>
+                                <span class="tag tag-intermediate" data-skill="hadoop" data-description="Hadoop ecosystem experience including HDFS, MapReduce, and Hive. Understanding of distributed file systems and big data architectures. 1 year experience.">Hadoop</span>
+                                <span class="tag tag-advanced" data-skill="warehousing" data-description="Data warehouse design, implementation, and optimization. Experience with star/snowflake schemas, dimensional modeling, and data mart development. 3+ years experience.">Data Warehousing</span>
+                                <span class="tag tag-expert" data-skill="dashboard" data-description="Dashboard design principles, KPI selection, and user experience optimization. Expertise in creating executive dashboards and operational reporting solutions. 5+ years experience.">Dashboard Design</span>
+                                <span class="tag tag-advanced" data-skill="abtesting" data-description="A/B testing design, implementation, and statistical analysis. Experience with experiment design, sample size calculation, and result interpretation for optimization.">A/B Testing</span>
+                                <span class="tag tag-expert" data-skill="storytelling" data-description="Data storytelling and communication skills for presenting insights to technical and non-technical audiences. Expertise in creating compelling narratives from complex data.">Data Storytelling</span>
+                            </div>
+                            
+                            <div class="skill-details-panel" id="skillDetailsPanel">
+                                <div class="panel-header">
+                                    <h4 class="panel-title" id="skillTitle">Skill Details</h4>
+                                    <button class="panel-close" id="closeSkillPanel">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="panel-content" id="skillContent">
+                                    <div class="skill-info" id="skillDefault">
+                                        <p>Click on any skill above to see detailed information about my experience, proficiency level, specific capabilities, and project examples.</p>
+                                        <div class="skill-example">
+                                            <i class="fas fa-mouse-pointer"></i>
+                                            <span>Select a skill to view comprehensive details</span>
+                                        </div>
+                                        <div class="skill-categories">
+                                            <div class="category">
+                                                <h5><i class="fas fa-star"></i> Expert Level (6+ years)</h5>
+                                                <p>Deep expertise with extensive professional experience and certification</p>
+                                            </div>
+                                            <div class="category">
+                                                <h5><i class="fas fa-chart-line"></i> Advanced Level (3-5 years)</h5>
+                                                <p>Strong professional experience with complex project implementation</p>
+                                            </div>
+                                            <div class="category">
+                                                <h5><i class="fas fa-check-circle"></i> Intermediate Level (1-2 years)</h5>
+                                                <p>Practical working knowledge with project experience</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
