@@ -2242,3 +2242,137 @@ select.error {
 `;
 
 document.head.appendChild(style);
+// Technical Expertise Expandable Details
+document.addEventListener('DOMContentLoaded', function() {
+    const skillTags = document.querySelectorAll('.skills-cloud .tag');
+    const skillDetailsPanel = document.getElementById('skillDetailsPanel');
+    const closeSkillPanel = document.getElementById('closeSkillPanel');
+    const skillContent = document.getElementById('skillContent');
+    const skillTitle = document.getElementById('skillTitle');
+    const skillDefault = document.getElementById('skillDefault');
+    
+    // Skill descriptions data
+    const skillData = {
+        python: {
+            title: "Python",
+            level: "Expert",
+            description: "Comprehensive experience with Python for data analysis, machine learning, and automation. Expertise includes Pandas, NumPy, Scikit-learn, TensorFlow, and data visualization libraries. 6+ years professional experience delivering data solutions.",
+            projects: ["Customer churn prediction models with 89% accuracy", "Sales forecasting systems using time series analysis", "Automated ETL pipelines for data processing", "Web scraping and data collection scripts"],
+            tools: ["Pandas", "NumPy", "Scikit-learn", "TensorFlow", "Matplotlib", "Seaborn", "BeautifulSoup"]
+        },
+        sql: {
+            title: "SQL",
+            level: "Expert",
+            description: "Advanced SQL skills for complex queries, data extraction, transformation, and analysis. Expertise in PostgreSQL, MySQL, SQL Server with query optimization and performance tuning. 6+ years experience in database management.",
+            projects: ["Optimized queries reducing report generation time by 70%", "Designed and implemented data warehouse schemas", "Created complex analytical queries for business reporting", "ETL pipeline development"],
+            tools: ["PostgreSQL", "MySQL", "SQL Server", "SQLite", "Query Optimization", "Indexing"]
+        },
+        tableau: {
+            title: "Tableau",
+            level: "Expert",
+            description: "Expert in Tableau dashboard design, data visualization, and business intelligence solutions. Certified Tableau Desktop Specialist with 5+ years experience creating interactive, insightful dashboards.",
+            projects: ["Enterprise sales dashboard used by 200+ executives", "Real-time operational metrics dashboard", "Customer behavior analysis visualization suite", "Executive KPI reporting"],
+            tools: ["Tableau Desktop", "Tableau Server", "Tableau Prep", "Calculated Fields", "LOD Expressions"]
+        },
+        powerbi: {
+            title: "Power BI",
+            level: "Expert",
+            description: "Power BI development including DAX calculations, data modeling, and report automation. Expertise in creating enterprise-level BI solutions with Power BI Service integration. 4 years experience.",
+            projects: ["Enterprise BI implementation for manufacturing company", "Sales performance tracking dashboard", "Financial reporting automation", "Real-time business monitoring"],
+            tools: ["Power BI Desktop", "DAX", "Power Query", "Power BI Service", "Data Modeling"]
+        },
+        excel: {
+            title: "Excel/Google Sheets",
+            level: "Expert",
+            description: "Advanced Excel skills including complex formulas, pivot tables, Power Query, VBA macros, and data modeling. Expert in Google Sheets with App Script automation. 6+ years experience.",
+            projects: ["Financial modeling and forecasting templates", "Automated reporting dashboards", "Data cleaning and transformation workflows", "Interactive data analysis tools"],
+            tools: ["Excel Formulas", "Pivot Tables", "Power Query", "VBA", "Google Sheets", "App Script"]
+        }
+        // Add more skills as needed...
+    };
+    
+    // Function to create skill detail HTML
+    function createSkillDetail(skill) {
+        const data = skillData[skill] || {
+            title: skill,
+            level: "Advanced",
+            description: `Professional experience with ${skill}.`,
+            projects: ["Multiple project implementations", "Cross-functional collaboration", "Continuous skill development"],
+            tools: ["Data Analysis", "Business Intelligence", "Problem Solving"]
+        };
+        
+        // Determine level class
+        let levelClass = "level-advanced";
+        if (data.level === "Expert") levelClass = "level-expert";
+        if (data.level === "Intermediate") levelClass = "level-intermediate";
+        
+        return `
+            <div class="skill-detail-content">
+                <div class="skill-header">
+                    <h5>${data.title}</h5>
+                    <div class="skill-level-badge ${levelClass}">${data.level} Level</div>
+                </div>
+                <p class="skill-description">${data.description}</p>
+                <div class="skill-projects">
+                    <h6><i class="fas fa-project-diagram"></i> Project Experience</h6>
+                    <ul class="project-list">
+                        ${data.projects.map(project => `<li>${project}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="skill-tools">
+                    <h6><i class="fas fa-tools"></i> Related Tools & Technologies</h6>
+                    <div class="tool-tags">
+                        ${data.tools.map(tool => `<span class="tool-tag">${tool}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Add click event to all skill tags
+    skillTags.forEach(tag => {
+        tag.addEventListener('click', function() {
+            const skill = this.getAttribute('data-skill');
+            const skillName = this.textContent;
+            
+            // Remove active class from all tags
+            skillTags.forEach(t => t.classList.remove('tag-active'));
+            // Add active class to clicked tag
+            this.classList.add('tag-active');
+            
+            // Hide default content
+            skillDefault.style.display = 'none';
+            
+            // Create and show skill details
+            skillContent.innerHTML = createSkillDetail(skill);
+            skillTitle.textContent = `${skillName} Expertise`;
+            
+            // Show panel
+            skillDetailsPanel.classList.add('active');
+            
+            // Scroll panel into view if needed
+            setTimeout(() => {
+                skillDetailsPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        });
+    });
+    
+    // Close panel event
+    closeSkillPanel.addEventListener('click', function() {
+        skillDetailsPanel.classList.remove('active');
+        skillTags.forEach(t => t.classList.remove('tag-active'));
+        skillDefault.style.display = 'block';
+        skillTitle.textContent = 'Skill Details';
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!skillDetailsPanel.contains(event.target) && 
+            !Array.from(skillTags).some(tag => tag.contains(event.target))) {
+            skillDetailsPanel.classList.remove('active');
+            skillTags.forEach(t => t.classList.remove('tag-active'));
+            skillDefault.style.display = 'block';
+            skillTitle.textContent = 'Skill Details';
+        }
+    });
+});
