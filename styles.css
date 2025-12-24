@@ -4,51 +4,6 @@
    Author: Silas Enoku
    Date: 2025
 ============================================ */
-
-/* ============ FULL VIEWPORT FIXES ============ */
-html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    position: relative;
-}
-
-body {
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-}
-
-.container {
-    width: 100%;
-    max-width: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-/* Ensure all sections cover full width */
-.section {
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-}
-
-/* Fix hero section to cover full viewport */
-.hero-section {
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    height: auto;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.hero-section .container {
-    height: 100%;
-    display: flex;
-    align-items: center;
-}
 /* ============ CSS RESET & GLOBAL STYLES ============ */
 *, *::before, *::after {
     margin: 0;
