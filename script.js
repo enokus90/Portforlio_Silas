@@ -6,7 +6,7 @@ const CONFIG = {
     ENVIRONMENT: 'production',
     CACHE_DURATION: 5 * 60 * 1000, // 5 minutes
     ANALYTICS_ENABLED: true,
-    DEBUG_MODE: false,
+    DEBUG_MODE: true,
     MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
     ALLOWED_FILE_TYPES: [
         'application/pdf',
@@ -68,6 +68,9 @@ class Utils {
     }
 
     static showNotification(message, type = 'info', duration = 3000) {
+        // Remove existing notifications
+        document.querySelectorAll('.notification').forEach(n => n.remove());
+        
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
         notification.innerHTML = `
@@ -445,7 +448,8 @@ class PortfolioAPI {
                 fileCount: formData.attachments ? formData.attachments.length : 0
             });
 
-            this.trackConversion('contact_form_submission', 'lead', {
+            // Track conversion - FIXED: Added this method
+            await this.trackConversion('contact_form_submission', 'lead', {
                 service: formData.service,
                 budget: formData.budget,
                 fileCount: formData.attachments ? formData.attachments.length : 0
@@ -522,13 +526,78 @@ class PortfolioAPI {
             const result = await response.json();
 
             if (result.success) {
-                this.trackConversion('newsletter_subscription', 'engagement');
+                await this.trackConversion('newsletter_subscription', 'engagement');
             }
 
             return result;
         } catch (error) {
             console.error('Newsletter subscription error:', error);
             throw error;
+        }
+    }
+
+    // ============ ADDED MISSING METHODS ============
+    
+    async trackPageView(data) {
+        if (!CONFIG.ANALYTICS_ENABLED) return;
+        
+        try {
+            const url = new URL(this.baseUrl);
+            url.searchParams.append('action', 'trackPageView');
+            url.searchParams.append('data', JSON.stringify(data));
+            
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(url);
+            } else {
+                await fetch(url);
+            }
+        } catch (error) {
+            if (CONFIG.DEBUG_MODE) console.error('Analytics error:', error);
+        }
+    }
+
+    async trackInteraction(data) {
+        if (!CONFIG.ANALYTICS_ENABLED) return;
+        
+        try {
+            const url = new URL(this.baseUrl);
+            url.searchParams.append('action', 'trackInteraction');
+            url.searchParams.append('data', JSON.stringify(data));
+            await fetch(url);
+        } catch (error) {
+            // Silent fail for analytics
+        }
+    }
+
+    async trackConversion(goalName, goalType = 'engagement', metadata = {}) {
+        if (!CONFIG.ANALYTICS_ENABLED) {
+            console.log(`Conversion tracked (analytics disabled): ${goalName}`, metadata);
+            return;
+        }
+        
+        try {
+            const url = new URL(this.baseUrl);
+            url.searchParams.append('action', 'trackConversion');
+            url.searchParams.append('data', JSON.stringify({
+                goalName,
+                goalType,
+                metadata,
+                timestamp: new Date().toISOString()
+            }));
+            
+            if (CONFIG.DEBUG_MODE) {
+                console.log(`Tracking conversion: ${goalName}`, metadata);
+            }
+            
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                console.warn(`Failed to track conversion ${goalName}: ${response.status}`);
+            }
+            
+        } catch (error) {
+            console.error('Error tracking conversion:', error);
+            // Don't throw error for analytics failures
         }
     }
 
@@ -578,7 +647,9 @@ class PortfolioAPI {
             timestamp: new Date().toISOString()
         }));
         
-        fetch(url).catch(() => {});
+        fetch(url).catch(() => {
+            // Silent fail for form logging
+        });
     }
 
     clearCache() {
@@ -756,24 +827,35 @@ class PortfolioUI {
     static init(apiInstance) {
         this.api = apiInstance;
         
-        // Initialize core features first
-        this.initNavigation();
-        this.initThemeToggle();
-        this.initScrollSpy();
-        this.initBackToTop();
-        this.initTypingEffect();
-        this.initPortfolioFilter();
-        this.initTestimonialSlider();
-        this.initContactForm();
-        this.initNewsletterForm();
+        console.log('Initializing Portfolio UI...');
         
-        // Start loading data
-        this.loadInitialData();
-        
-        // Initialize loading screen last to ensure it completes
-        this.initLoadingScreen();
-        
-        this.api.logSystemEvent('INFO', 'ui', 'init', 'Portfolio UI initialized successfully');
+        try {
+            // Initialize loading screen first
+            this.initLoadingScreen();
+            
+            // Initialize core features
+            this.initNavigation();
+            this.initThemeToggle();
+            this.initScrollSpy();
+            this.initBackToTop();
+            this.initTypingEffect();
+            this.initPortfolioFilter();
+            this.initTestimonialSlider();
+            this.initContactForm();
+            this.initNewsletterForm();
+            
+            // Load initial data
+            this.loadInitialData();
+            
+            // Track page view
+            this.trackPageView();
+            
+            this.api.logSystemEvent('INFO', 'ui', 'init', 'Portfolio UI initialized successfully');
+            
+        } catch (error) {
+            console.error('Error during UI initialization:', error);
+            this.hideLoadingScreen();
+        }
     }
     
     static initLoadingScreen() {
@@ -788,25 +870,15 @@ class PortfolioUI {
         // Set a timeout to ensure loading screen hides even if something goes wrong
         const loadingTimeout = setTimeout(() => {
             console.log('Loading screen timeout - forcing hide');
-            loadingScreen.classList.add('fade-out');
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 500);
+            this.hideLoadingScreen();
         }, 10000); // 10 second timeout
         
         // Store timeout reference for cleanup
         window.loadingTimeout = loadingTimeout;
         
-        // Listen for data loaded event
-        document.addEventListener('dataLoaded', () => {
-            console.log('Data loaded event received, hiding loading screen');
-            clearTimeout(loadingTimeout);
-            this.hideLoadingScreen();
-        });
-        
         // Also hide on window load
         window.addEventListener('load', () => {
-            console.log('Window loaded, hiding loading screen');
+            console.log('Window loaded');
             clearTimeout(loadingTimeout);
             setTimeout(() => {
                 this.hideLoadingScreen();
@@ -816,7 +888,7 @@ class PortfolioUI {
     
     static hideLoadingScreen() {
         const loadingScreen = document.getElementById('loading-screen');
-        if (loadingScreen) {
+        if (loadingScreen && loadingScreen.style.display !== 'none') {
             console.log('Hiding loading screen');
             loadingScreen.classList.add('fade-out');
             setTimeout(() => {
@@ -828,6 +900,7 @@ class PortfolioUI {
         // Clear any existing timeout
         if (window.loadingTimeout) {
             clearTimeout(window.loadingTimeout);
+            window.loadingTimeout = null;
         }
     }
     
@@ -889,12 +962,14 @@ class PortfolioUI {
                 localStorage.setItem('theme', 'light');
             }
             
-            PortfolioUI.api.trackInteraction({
-                elementType: 'switch',
-                elementId: 'themeSwitch',
-                action: 'toggle',
-                value: this.checked ? 'dark' : 'light'
-            });
+            if (PortfolioUI.api) {
+                PortfolioUI.api.trackInteraction({
+                    elementType: 'switch',
+                    elementId: 'themeSwitch',
+                    action: 'toggle',
+                    value: this.checked ? 'dark' : 'light'
+                });
+            }
         });
     }
     
@@ -940,12 +1015,14 @@ class PortfolioUI {
                 behavior: 'smooth'
             });
             
-            PortfolioUI.api.trackInteraction({
-                elementType: 'button',
-                elementId: 'backToTop',
-                action: 'click',
-                value: 'Back to top'
-            });
+            if (PortfolioUI.api) {
+                PortfolioUI.api.trackInteraction({
+                    elementType: 'button',
+                    elementId: 'backToTop',
+                    action: 'click',
+                    value: 'Back to top'
+                });
+            }
         });
     }
     
@@ -1052,12 +1129,14 @@ class PortfolioUI {
                     }
                 });
                 
-                PortfolioUI.api.trackInteraction({
-                    elementType: 'button',
-                    elementId: 'portfolioFilter',
-                    action: 'click',
-                    value: filterValue
-                });
+                if (PortfolioUI.api) {
+                    PortfolioUI.api.trackInteraction({
+                        elementType: 'button',
+                        elementId: 'portfolioFilter',
+                        action: 'click',
+                        value: filterValue
+                    });
+                }
             });
         });
     }
@@ -1214,6 +1293,7 @@ class PortfolioUI {
                     return;
                 }
                 
+                console.log('Submitting form data...');
                 const result = await PortfolioUI.api.submitContact(formData);
                 
                 if (result.success) {
@@ -1239,8 +1319,8 @@ class PortfolioUI {
                     throw new Error(result.message || result.error || 'Submission failed');
                 }
             } catch (error) {
-                Utils.showNotification(`Error: ${error.message}. Please try again.`, 'error');
                 console.error('Form submission failed:', error);
+                Utils.showNotification(`Error: ${error.message}. Please try again.`, 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.querySelector('span').textContent = originalText;
@@ -1470,8 +1550,8 @@ class PortfolioUI {
             // Initialize animated counters after data is loaded
             this.initAnimatedCounters();
             
-            // Dispatch data loaded event
-            document.dispatchEvent(new Event('dataLoaded'));
+            // Hide loading screen
+            this.hideLoadingScreen();
             
             console.log('All data loaded and UI updated');
             
@@ -1479,9 +1559,7 @@ class PortfolioUI {
             console.error('Error loading initial data:', error);
             Utils.showNotification('Error loading data. Please refresh the page.', 'error');
             this.hideAllLoading();
-            
-            // Still dispatch data loaded event to hide loading screen
-            document.dispatchEvent(new Event('dataLoaded'));
+            this.hideLoadingScreen();
         }
     }
     
@@ -1730,12 +1808,14 @@ class PortfolioUI {
             const modal = new bootstrap.Modal(document.getElementById('projectModal'));
             modal.show();
             
-            PortfolioUI.api.trackInteraction({
-                elementType: 'modal',
-                elementId: 'projectModal',
-                action: 'open',
-                value: project.title
-            });
+            if (PortfolioUI.api) {
+                PortfolioUI.api.trackInteraction({
+                    elementType: 'modal',
+                    elementId: 'projectModal',
+                    action: 'open',
+                    value: project.title
+                });
+            }
             
         } catch (error) {
             console.error('Error showing project modal:', error);
@@ -1813,12 +1893,14 @@ class PortfolioUI {
             const modal = new bootstrap.Modal(document.getElementById('serviceModal'));
             modal.show();
             
-            PortfolioUI.api.trackInteraction({
-                elementType: 'modal',
-                elementId: 'serviceModal',
-                action: 'open',
-                value: service.name
-            });
+            if (PortfolioUI.api) {
+                PortfolioUI.api.trackInteraction({
+                    elementType: 'modal',
+                    elementId: 'serviceModal',
+                    action: 'open',
+                    value: service.name
+                });
+            }
             
         } catch (error) {
             console.error('Error showing service modal:', error);
@@ -1849,6 +1931,24 @@ class PortfolioUI {
                 }
             }
         }
+    }
+    
+    static trackPageView() {
+        if (!PortfolioUI.api || !CONFIG.ANALYTICS_ENABLED) return;
+        
+        const pageData = {
+            pageUrl: window.location.href,
+            pageTitle: document.title,
+            pagePath: window.location.pathname + window.location.hash,
+            referrer: document.referrer || '',
+            screenResolution: `${window.screen.width}x${window.screen.height}`,
+            language: navigator.language,
+            userAgent: navigator.userAgent,
+            loadTime: window.performance.timing ? 
+                window.performance.timing.loadEventEnd - window.performance.timing.navigationStart : 0
+        };
+        
+        PortfolioUI.api.trackPageView(pageData);
     }
     
     static trackNavigationClick(targetId) {
@@ -1896,24 +1996,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         Utils.showNotification('Failed to initialize application. Please refresh the page.', 'error');
         
         // Force hide loading screen on error
-        const loadingScreen = document.getElementById('loading-screen');
-        if (loadingScreen) {
-            loadingScreen.style.display = 'none';
-        }
+        PortfolioUI.hideLoadingScreen();
     }
 });
 
 // ============ SAFETY TIMEOUT FOR LOADING SCREEN ============
-// Add a safety timeout to ensure loading screen hides even if something goes wrong
 setTimeout(() => {
-    const loadingScreen = document.getElementById('loading-screen');
-    if (loadingScreen && loadingScreen.style.display !== 'none') {
-        console.log('Safety timeout triggered - hiding loading screen');
-        loadingScreen.classList.add('fade-out');
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-        }, 500);
-    }
+    PortfolioUI.hideLoadingScreen();
 }, 15000); // 15 second safety timeout
 
 // ============ CSS STYLES ============
