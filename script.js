@@ -2242,3 +2242,23 @@ select.error {
 `;
 
 document.head.appendChild(style);
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Find your form (make sure your <form> tag has id="contact-form")
+    const form = document.getElementById('contact-form');
+    
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Stops the page from refreshing
+            
+            // Get form data
+            const formData = new FormData(form);
+            console.log("Form Submitted:", Object.fromEntries(formData));
+
+            // Show success message
+            alert("Thank you, Silas! Your message has been sent (simulation).");
+            form.reset(); 
+        });
+    }
+});
+</script>
