@@ -14187,27 +14187,3 @@ html {
 .digital-twin {
     background: linear-gradient(135deg, #1a1a2e, #16213e);
     border-radius: var(--
-/* Update these specific classes in your <style> tag */
-.hero-section {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    overflow: hidden; /* Prevents shapes from creating scrollbars */
-    z-index: 1;
-}
-
-.floating-shapes {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1; /* Ensures shapes stay BEHIND your text */
-    pointer-events: none;
-}
-
-@keyframes float {
-    0%, 100% { transform: translate(0, 0) rotate(0deg); }
-    50% { transform: translate(20px, -30px) rotate(180deg); }
-}
