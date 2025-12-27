@@ -1,6 +1,6 @@
 // ============ CONFIGURATION ============
 const CONFIG = {
-    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbx1izjHfotaZ3TYurkJ5zUb-c2oTPZWZ9daHnt3kNTTvMSWhEBUeghfaRtVClnjqce1/exec',
+    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyLOEQ-RO7xEvcfwxdQ4rbjAh9CEmyHFbyA1jmnSocYo1vksJP44uklxSc3GZ0GqUNm5Q/exec',
     SITE_NAME: 'Silas Enoku Portfolio',
     VERSION: '1.0.0',
     ENVIRONMENT: 'production',
