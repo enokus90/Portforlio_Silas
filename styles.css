@@ -874,7 +874,7 @@ li {
 
 /* ============ HERO SECTION ============ */
 .hero-section {
-    min-height: 80vh;
+    min-height: 0vh;
     display: flex;
     align-items: center;
     position: relative;
