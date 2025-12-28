@@ -14187,3 +14187,13 @@ html {
 .digital-twin {
     background: linear-gradient(135deg, #1a1a2e, #16213e);
     border-radius: var(--
+/* Smooth scrolling with offset for fixed header */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px; /* Height of your fixed navbar */
+}
+
+/* Or target specific sections */
+section[id] {
+    scroll-margin-top: 80px;
+}
