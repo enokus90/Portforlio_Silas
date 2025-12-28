@@ -14197,3 +14197,18 @@ html {
 section[id] {
     scroll-margin-top: 80px;
 }
+/* Fix for sections being covered by fixed navbar */
+section {
+    scroll-margin-top: 80px;
+}
+
+.hero-section {
+    padding-top: 80px;
+    margin-top: -80px;
+}
+
+/* Adjust if navbar height changes on scroll */
+.navbar.scrolled + .hero-section {
+    padding-top: 60px;
+    margin-top: -60px;
+}
