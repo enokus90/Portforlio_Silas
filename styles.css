@@ -875,13 +875,13 @@ li {
 /* ============ HERO SECTION ============ */
 .hero-section {
     min-height: 100vh;
-    background: var(--gradient-dark);
-    color: var(--text-white);
-    position: relative;
-    overflow: hidden;
     display: flex;
     align-items: center;
-    padding-top: 80px;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-color);
+    padding-top: 80px; /* ADD THIS LINE */
+    margin-top: -80px; /* ADD THIS LINE */
 }
 
 .hero-background {
